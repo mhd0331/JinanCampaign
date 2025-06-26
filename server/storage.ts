@@ -1,4 +1,6 @@
 import { inquiries, chatMessages, type Inquiry, type InsertInquiry, type ChatMessage, type InsertChatMessage } from "@shared/schema";
+import { db } from "./db";
+import { eq, desc } from "drizzle-orm";
 
 export interface IStorage {
   // Inquiry methods
@@ -11,60 +13,44 @@ export interface IStorage {
   getChatHistory(sessionId: string): Promise<ChatMessage[]>;
 }
 
-export class MemStorage implements IStorage {
-  private inquiries: Map<number, Inquiry>;
-  private chatMessages: Map<number, ChatMessage>;
-  private currentInquiryId: number;
-  private currentChatId: number;
-
-  constructor() {
-    this.inquiries = new Map();
-    this.chatMessages = new Map();
-    this.currentInquiryId = 1;
-    this.currentChatId = 1;
-  }
-
+export class DatabaseStorage implements IStorage {
   async createInquiry(insertInquiry: InsertInquiry): Promise<Inquiry> {
-    const id = this.currentInquiryId++;
-    const inquiry: Inquiry = {
-      ...insertInquiry,
-      id,
-      createdAt: new Date(),
-      responded: false,
-    };
-    this.inquiries.set(id, inquiry);
+    const [inquiry] = await db
+      .insert(inquiries)
+      .values(insertInquiry)
+      .returning();
     return inquiry;
   }
 
   async getInquiries(): Promise<Inquiry[]> {
-    return Array.from(this.inquiries.values()).sort((a, b) => 
-      new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
-    );
+    return await db
+      .select()
+      .from(inquiries)
+      .orderBy(desc(inquiries.createdAt));
   }
 
   async markInquiryResponded(id: number): Promise<void> {
-    const inquiry = this.inquiries.get(id);
-    if (inquiry) {
-      this.inquiries.set(id, { ...inquiry, responded: true });
-    }
+    await db
+      .update(inquiries)
+      .set({ responded: true })
+      .where(eq(inquiries.id, id));
   }
 
   async saveChatMessage(insertMessage: InsertChatMessage): Promise<ChatMessage> {
-    const id = this.currentChatId++;
-    const message: ChatMessage = {
-      ...insertMessage,
-      id,
-      createdAt: new Date(),
-    };
-    this.chatMessages.set(id, message);
+    const [message] = await db
+      .insert(chatMessages)
+      .values(insertMessage)
+      .returning();
     return message;
   }
 
   async getChatHistory(sessionId: string): Promise<ChatMessage[]> {
-    return Array.from(this.chatMessages.values())
-      .filter(msg => msg.sessionId === sessionId)
-      .sort((a, b) => new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime());
+    return await db
+      .select()
+      .from(chatMessages)
+      .where(eq(chatMessages.sessionId, sessionId))
+      .orderBy(chatMessages.createdAt);
   }
 }
 
-export const storage = new MemStorage();
+export const storage = new DatabaseStorage();

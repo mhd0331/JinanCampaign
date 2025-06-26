@@ -33,7 +33,7 @@ This is a full-stack campaign website for Lee Woo-kyu, a candidate for Jinan Cou
 ### Backend Architecture
 - **Framework**: Express.js with TypeScript
 - **Database**: PostgreSQL with Drizzle ORM for type-safe database operations
-- **Storage**: Configurable storage layer with in-memory fallback
+- **Storage**: PostgreSQL database storage with full CRUD operations
 - **API**: RESTful endpoints for inquiries and chat functionality
 
 ### Database Schema
@@ -96,6 +96,7 @@ Two main tables:
 ## Changelog
 
 - June 26, 2025. Initial setup
+- June 26, 2025. Added PostgreSQL database integration with Drizzle ORM, replacing in-memory storage
 
 ## User Preferences
 
