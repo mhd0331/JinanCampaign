@@ -5,6 +5,10 @@ import {
   aiTrainingDocs,
   speechTrainingData,
   users,
+  citizenSuggestions,
+  publicFeedback,
+  suggestionSupport,
+  implementationUpdates,
   type Inquiry, 
   type InsertInquiry, 
   type ChatMessage, 
@@ -16,10 +20,18 @@ import {
   type SpeechTraining,
   type InsertSpeechTraining,
   type User,
-  type InsertUser
+  type InsertUser,
+  type CitizenSuggestion,
+  type InsertCitizenSuggestion,
+  type PublicFeedback,
+  type InsertPublicFeedback,
+  type SuggestionSupport,
+  type InsertSuggestionSupport,
+  type ImplementationUpdate,
+  type InsertImplementationUpdate
 } from "@shared/schema";
 import { db } from "./db";
-import { eq, desc, and, like, ilike } from "drizzle-orm";
+import { eq, desc, and, like, ilike, sql } from "drizzle-orm";
 
 export interface IStorage {
   // Inquiry methods
@@ -57,6 +69,33 @@ export interface IStorage {
   getUserByUsername(username: string): Promise<User | undefined>;
   updateUser(id: number, user: Partial<User>): Promise<User>;
   getUsers(): Promise<User[]>;
+  
+  // Citizen suggestion methods
+  createCitizenSuggestion(suggestion: InsertCitizenSuggestion): Promise<CitizenSuggestion>;
+  getCitizenSuggestions(category?: string, status?: string): Promise<CitizenSuggestion[]>;
+  getCitizenSuggestionById(id: number): Promise<CitizenSuggestion | undefined>;
+  updateCitizenSuggestion(id: number, updates: Partial<CitizenSuggestion>): Promise<CitizenSuggestion>;
+  deleteCitizenSuggestion(id: number): Promise<void>;
+  incrementSuggestionViews(id: number): Promise<void>;
+  searchCitizenSuggestions(query: string): Promise<CitizenSuggestion[]>;
+  
+  // Public feedback methods
+  createPublicFeedback(feedback: InsertPublicFeedback): Promise<PublicFeedback>;
+  getPublicFeedback(type?: string, targetId?: string): Promise<PublicFeedback[]>;
+  updatePublicFeedback(id: number, updates: Partial<PublicFeedback>): Promise<PublicFeedback>;
+  deletePublicFeedback(id: number): Promise<void>;
+  moderatePublicFeedback(id: number, status: string, notes?: string): Promise<void>;
+  
+  // Suggestion support methods
+  createSuggestionSupport(support: InsertSuggestionSupport): Promise<SuggestionSupport>;
+  getSuggestionSupport(suggestionId: number): Promise<SuggestionSupport[]>;
+  deleteSuggestionSupport(id: number): Promise<void>;
+  
+  // Implementation update methods
+  createImplementationUpdate(update: InsertImplementationUpdate): Promise<ImplementationUpdate>;
+  getImplementationUpdates(suggestionId?: number): Promise<ImplementationUpdate[]>;
+  updateImplementationUpdate(id: number, updates: Partial<ImplementationUpdate>): Promise<ImplementationUpdate>;
+  deleteImplementationUpdate(id: number): Promise<void>;
 }
 
 export class DatabaseStorage implements IStorage {
@@ -297,6 +336,224 @@ export class DatabaseStorage implements IStorage {
       .from(users)
       .where(eq(users.isActive, true))
       .orderBy(desc(users.createdAt));
+  }
+
+  // Citizen Suggestion Methods
+  async createCitizenSuggestion(insertSuggestion: InsertCitizenSuggestion): Promise<CitizenSuggestion> {
+    const [suggestion] = await db
+      .insert(citizenSuggestions)
+      .values({
+        ...insertSuggestion,
+        updatedAt: new Date()
+      })
+      .returning();
+    return suggestion;
+  }
+
+  async getCitizenSuggestions(category?: string, status?: string): Promise<CitizenSuggestion[]> {
+    if (category && status) {
+      return await db
+        .select()
+        .from(citizenSuggestions)
+        .where(and(eq(citizenSuggestions.category, category), eq(citizenSuggestions.status, status)))
+        .orderBy(desc(citizenSuggestions.updatedAt));
+    } else if (category) {
+      return await db
+        .select()
+        .from(citizenSuggestions)
+        .where(eq(citizenSuggestions.category, category))
+        .orderBy(desc(citizenSuggestions.updatedAt));
+    } else if (status) {
+      return await db
+        .select()
+        .from(citizenSuggestions)
+        .where(eq(citizenSuggestions.status, status))
+        .orderBy(desc(citizenSuggestions.updatedAt));
+    }
+
+    return await db
+      .select()
+      .from(citizenSuggestions)
+      .orderBy(desc(citizenSuggestions.updatedAt));
+  }
+
+  async getCitizenSuggestionById(id: number): Promise<CitizenSuggestion | undefined> {
+    const [suggestion] = await db
+      .select()
+      .from(citizenSuggestions)
+      .where(eq(citizenSuggestions.id, id));
+    return suggestion;
+  }
+
+  async updateCitizenSuggestion(id: number, updateData: Partial<CitizenSuggestion>): Promise<CitizenSuggestion> {
+    const [suggestion] = await db
+      .update(citizenSuggestions)
+      .set({
+        ...updateData,
+        updatedAt: new Date()
+      })
+      .where(eq(citizenSuggestions.id, id))
+      .returning();
+    return suggestion;
+  }
+
+  async deleteCitizenSuggestion(id: number): Promise<void> {
+    await db.delete(citizenSuggestions).where(eq(citizenSuggestions.id, id));
+  }
+
+  async incrementSuggestionViews(id: number): Promise<void> {
+    await db
+      .update(citizenSuggestions)
+      .set({
+        viewCount: sql`${citizenSuggestions.viewCount} + 1`
+      })
+      .where(eq(citizenSuggestions.id, id));
+  }
+
+  async searchCitizenSuggestions(query: string): Promise<CitizenSuggestion[]> {
+    return await db
+      .select()
+      .from(citizenSuggestions)
+      .where(
+        ilike(citizenSuggestions.title, `%${query}%`)
+      )
+      .orderBy(desc(citizenSuggestions.updatedAt));
+  }
+
+  // Public Feedback Methods
+  async createPublicFeedback(insertFeedback: InsertPublicFeedback): Promise<PublicFeedback> {
+    const [feedback] = await db
+      .insert(publicFeedback)
+      .values(insertFeedback)
+      .returning();
+    return feedback;
+  }
+
+  async getPublicFeedback(type?: string, targetId?: string): Promise<PublicFeedback[]> {
+    if (type && targetId) {
+      return await db
+        .select()
+        .from(publicFeedback)
+        .where(and(eq(publicFeedback.type, type), eq(publicFeedback.targetId, targetId)))
+        .orderBy(desc(publicFeedback.createdAt));
+    } else if (type) {
+      return await db
+        .select()
+        .from(publicFeedback)
+        .where(eq(publicFeedback.type, type))
+        .orderBy(desc(publicFeedback.createdAt));
+    }
+
+    return await db
+      .select()
+      .from(publicFeedback)
+      .orderBy(desc(publicFeedback.createdAt));
+  }
+
+  async updatePublicFeedback(id: number, updateData: Partial<PublicFeedback>): Promise<PublicFeedback> {
+    const [feedback] = await db
+      .update(publicFeedback)
+      .set(updateData)
+      .where(eq(publicFeedback.id, id))
+      .returning();
+    return feedback;
+  }
+
+  async deletePublicFeedback(id: number): Promise<void> {
+    await db.delete(publicFeedback).where(eq(publicFeedback.id, id));
+  }
+
+  async moderatePublicFeedback(id: number, status: string, notes?: string): Promise<void> {
+    await db
+      .update(publicFeedback)
+      .set({
+        moderationStatus: status,
+        moderatorNotes: notes
+      })
+      .where(eq(publicFeedback.id, id));
+  }
+
+  // Suggestion Support Methods
+  async createSuggestionSupport(insertSupport: InsertSuggestionSupport): Promise<SuggestionSupport> {
+    const [support] = await db
+      .insert(suggestionSupport)
+      .values(insertSupport)
+      .returning();
+
+    // Update support count in suggestions table
+    await db
+      .update(citizenSuggestions)
+      .set({
+        supportCount: sql`${citizenSuggestions.supportCount} + 1`
+      })
+      .where(eq(citizenSuggestions.id, insertSupport.suggestionId));
+
+    return support;
+  }
+
+  async getSuggestionSupport(suggestionId: number): Promise<SuggestionSupport[]> {
+    return await db
+      .select()
+      .from(suggestionSupport)
+      .where(eq(suggestionSupport.suggestionId, suggestionId))
+      .orderBy(desc(suggestionSupport.createdAt));
+  }
+
+  async deleteSuggestionSupport(id: number): Promise<void> {
+    // Get the suggestion ID before deletion
+    const [support] = await db
+      .select()
+      .from(suggestionSupport)
+      .where(eq(suggestionSupport.id, id));
+
+    if (support) {
+      await db.delete(suggestionSupport).where(eq(suggestionSupport.id, id));
+
+      // Update support count in suggestions table
+      await db
+        .update(citizenSuggestions)
+        .set({
+          supportCount: sql`${citizenSuggestions.supportCount} - 1`
+        })
+        .where(eq(citizenSuggestions.id, support.suggestionId));
+    }
+  }
+
+  // Implementation Update Methods
+  async createImplementationUpdate(insertUpdate: InsertImplementationUpdate): Promise<ImplementationUpdate> {
+    const [update] = await db
+      .insert(implementationUpdates)
+      .values(insertUpdate)
+      .returning();
+    return update;
+  }
+
+  async getImplementationUpdates(suggestionId?: number): Promise<ImplementationUpdate[]> {
+    if (suggestionId) {
+      return await db
+        .select()
+        .from(implementationUpdates)
+        .where(eq(implementationUpdates.suggestionId, suggestionId))
+        .orderBy(desc(implementationUpdates.createdAt));
+    }
+
+    return await db
+      .select()
+      .from(implementationUpdates)
+      .orderBy(desc(implementationUpdates.createdAt));
+  }
+
+  async updateImplementationUpdate(id: number, updateData: Partial<ImplementationUpdate>): Promise<ImplementationUpdate> {
+    const [update] = await db
+      .update(implementationUpdates)
+      .set(updateData)
+      .where(eq(implementationUpdates.id, id))
+      .returning();
+    return update;
+  }
+
+  async deleteImplementationUpdate(id: number): Promise<void> {
+    await db.delete(implementationUpdates).where(eq(implementationUpdates.id, id));
   }
 }
 

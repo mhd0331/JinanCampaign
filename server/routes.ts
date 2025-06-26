@@ -7,7 +7,11 @@ import {
   insertCmsContentSchema,
   insertAiTrainingDocSchema,
   insertSpeechTrainingSchema,
-  insertUserSchema
+  insertUserSchema,
+  insertCitizenSuggestionSchema,
+  insertPublicFeedbackSchema,
+  insertSuggestionSupportSchema,
+  insertImplementationUpdateSchema
 } from "@shared/schema";
 import { getChatResponse } from "./services/openai";
 
@@ -287,6 +291,207 @@ export async function registerRoutes(app: Express): Promise<Server> {
     try {
       const id = parseInt(req.params.id);
       await storage.validateSpeechTraining(id);
+      res.json({ success: true });
+    } catch (error: any) {
+      res.status(500).json({ success: false, error: error.message });
+    }
+  });
+
+  // Citizen Suggestions Routes
+  app.get("/api/citizen-suggestions", async (req, res) => {
+    try {
+      const { category, status } = req.query;
+      const suggestions = await storage.getCitizenSuggestions(category as string, status as string);
+      res.json({ success: true, suggestions });
+    } catch (error: any) {
+      res.status(500).json({ success: false, error: error.message });
+    }
+  });
+
+  app.post("/api/citizen-suggestions", async (req, res) => {
+    try {
+      const validatedData = insertCitizenSuggestionSchema.parse(req.body);
+      const suggestion = await storage.createCitizenSuggestion(validatedData);
+      res.json({ success: true, suggestion });
+    } catch (error: any) {
+      res.status(400).json({ success: false, error: error.message });
+    }
+  });
+
+  app.get("/api/citizen-suggestions/:id", async (req, res) => {
+    try {
+      const id = parseInt(req.params.id);
+      const suggestion = await storage.getCitizenSuggestionById(id);
+      if (!suggestion) {
+        return res.status(404).json({ success: false, error: "Suggestion not found" });
+      }
+      
+      // Increment view count
+      await storage.incrementSuggestionViews(id);
+      
+      res.json({ success: true, suggestion });
+    } catch (error: any) {
+      res.status(500).json({ success: false, error: error.message });
+    }
+  });
+
+  app.put("/api/citizen-suggestions/:id", async (req, res) => {
+    try {
+      const id = parseInt(req.params.id);
+      const suggestion = await storage.updateCitizenSuggestion(id, req.body);
+      res.json({ success: true, suggestion });
+    } catch (error: any) {
+      res.status(400).json({ success: false, error: error.message });
+    }
+  });
+
+  app.delete("/api/citizen-suggestions/:id", async (req, res) => {
+    try {
+      const id = parseInt(req.params.id);
+      await storage.deleteCitizenSuggestion(id);
+      res.json({ success: true });
+    } catch (error: any) {
+      res.status(500).json({ success: false, error: error.message });
+    }
+  });
+
+  app.get("/api/citizen-suggestions/search", async (req, res) => {
+    try {
+      const { q } = req.query;
+      if (!q) {
+        return res.status(400).json({ success: false, error: "Query parameter required" });
+      }
+      const suggestions = await storage.searchCitizenSuggestions(q as string);
+      res.json({ success: true, suggestions });
+    } catch (error: any) {
+      res.status(500).json({ success: false, error: error.message });
+    }
+  });
+
+  // Public Feedback Routes
+  app.get("/api/public-feedback", async (req, res) => {
+    try {
+      const { type, targetId } = req.query;
+      const feedback = await storage.getPublicFeedback(type as string, targetId as string);
+      res.json({ success: true, feedback });
+    } catch (error: any) {
+      res.status(500).json({ success: false, error: error.message });
+    }
+  });
+
+  app.post("/api/public-feedback", async (req, res) => {
+    try {
+      const validatedData = insertPublicFeedbackSchema.parse(req.body);
+      const feedback = await storage.createPublicFeedback(validatedData);
+      res.json({ success: true, feedback });
+    } catch (error: any) {
+      res.status(400).json({ success: false, error: error.message });
+    }
+  });
+
+  app.put("/api/public-feedback/:id", async (req, res) => {
+    try {
+      const id = parseInt(req.params.id);
+      const feedback = await storage.updatePublicFeedback(id, req.body);
+      res.json({ success: true, feedback });
+    } catch (error: any) {
+      res.status(400).json({ success: false, error: error.message });
+    }
+  });
+
+  app.delete("/api/public-feedback/:id", async (req, res) => {
+    try {
+      const id = parseInt(req.params.id);
+      await storage.deletePublicFeedback(id);
+      res.json({ success: true });
+    } catch (error: any) {
+      res.status(500).json({ success: false, error: error.message });
+    }
+  });
+
+  app.post("/api/public-feedback/:id/moderate", async (req, res) => {
+    try {
+      const id = parseInt(req.params.id);
+      const { status, notes } = req.body;
+      await storage.moderatePublicFeedback(id, status, notes);
+      res.json({ success: true });
+    } catch (error: any) {
+      res.status(500).json({ success: false, error: error.message });
+    }
+  });
+
+  // Suggestion Support Routes
+  app.get("/api/citizen-suggestions/:id/support", async (req, res) => {
+    try {
+      const suggestionId = parseInt(req.params.id);
+      const support = await storage.getSuggestionSupport(suggestionId);
+      res.json({ success: true, support });
+    } catch (error: any) {
+      res.status(500).json({ success: false, error: error.message });
+    }
+  });
+
+  app.post("/api/citizen-suggestions/:id/support", async (req, res) => {
+    try {
+      const suggestionId = parseInt(req.params.id);
+      const validatedData = insertSuggestionSupportSchema.parse({
+        ...req.body,
+        suggestionId
+      });
+      const support = await storage.createSuggestionSupport(validatedData);
+      res.json({ success: true, support });
+    } catch (error: any) {
+      res.status(400).json({ success: false, error: error.message });
+    }
+  });
+
+  app.delete("/api/suggestion-support/:id", async (req, res) => {
+    try {
+      const id = parseInt(req.params.id);
+      await storage.deleteSuggestionSupport(id);
+      res.json({ success: true });
+    } catch (error: any) {
+      res.status(500).json({ success: false, error: error.message });
+    }
+  });
+
+  // Implementation Updates Routes
+  app.get("/api/implementation-updates", async (req, res) => {
+    try {
+      const { suggestionId } = req.query;
+      const updates = await storage.getImplementationUpdates(
+        suggestionId ? parseInt(suggestionId as string) : undefined
+      );
+      res.json({ success: true, updates });
+    } catch (error: any) {
+      res.status(500).json({ success: false, error: error.message });
+    }
+  });
+
+  app.post("/api/implementation-updates", async (req, res) => {
+    try {
+      const validatedData = insertImplementationUpdateSchema.parse(req.body);
+      const update = await storage.createImplementationUpdate(validatedData);
+      res.json({ success: true, update });
+    } catch (error: any) {
+      res.status(400).json({ success: false, error: error.message });
+    }
+  });
+
+  app.put("/api/implementation-updates/:id", async (req, res) => {
+    try {
+      const id = parseInt(req.params.id);
+      const update = await storage.updateImplementationUpdate(id, req.body);
+      res.json({ success: true, update });
+    } catch (error: any) {
+      res.status(400).json({ success: false, error: error.message });
+    }
+  });
+
+  app.delete("/api/implementation-updates/:id", async (req, res) => {
+    try {
+      const id = parseInt(req.params.id);
+      await storage.deleteImplementationUpdate(id);
       res.json({ success: true });
     } catch (error: any) {
       res.status(500).json({ success: false, error: error.message });

@@ -6,6 +6,7 @@ import { TooltipProvider } from "@/components/ui/tooltip";
 import Home from "@/pages/Home";
 import PolicyDetail from "@/pages/PolicyDetail";
 import CMSDashboard from "@/pages/CMSDashboard";
+import CitizenSuggestions from "@/pages/CitizenSuggestions";
 import NotFound from "@/pages/not-found";
 
 function Router() {
@@ -14,6 +15,7 @@ function Router() {
       <Route path="/" component={Home} />
       <Route path="/policy/:policyId" component={PolicyDetail} />
       <Route path="/cms" component={CMSDashboard} />
+      <Route path="/suggestions" component={CitizenSuggestions} />
       <Route component={NotFound} />
     </Switch>
   );

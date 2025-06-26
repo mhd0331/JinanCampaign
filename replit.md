@@ -42,13 +42,17 @@ This is a full-stack campaign website for Lee Woo-kyu, a candidate for Jinan Cou
 - **Monitoring**: Request logging, error handling, performance tracking
 
 ### Database Schema
-Extended database with comprehensive content and training management:
+Comprehensive database supporting full campaign platform functionality:
 1. **inquiries**: Stores citizen contact forms with name, phone, district, message, and response status
 2. **chat_messages**: Stores AI chat conversations with session management
 3. **cms_content**: Content management system for policies, news, announcements, and documents
 4. **ai_training_docs**: AI training documents with categorization, tags, and embedding support
 5. **speech_training_data**: Speech training data for voice synthesis with phonetic transcription
 6. **users**: User management system for CMS access control with role-based permissions
+7. **citizen_suggestions**: Citizen suggestions with categorization, priority, status tracking, and support counts
+8. **public_feedback**: Public feedback and ratings with moderation capabilities
+9. **suggestion_support**: Support/voting system for citizen suggestions with detailed tracking
+10. **implementation_updates**: Progress tracking for implemented suggestions and policies
 
 ## Data Flow
 
@@ -110,6 +114,7 @@ Extended database with comprehensive content and training management:
 - June 26, 2025. Created comprehensive policy detail pages with individual routes, budget information, implementation timelines, and related policy suggestions
 - June 26, 2025. Implemented comprehensive security features including input validation, XSS protection, SQL injection prevention, rate limiting, and performance monitoring
 - June 26, 2025. Added comprehensive CMS functionality with content management, AI training document system, and speech training capabilities for enhanced AI responses
+- June 26, 2025. Implemented citizen suggestion and feedback collection system with categorization, priority levels, support voting, moderation capabilities, and progress tracking accessible at /suggestions route
 
 ## User Preferences
 
