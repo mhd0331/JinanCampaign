@@ -29,6 +29,7 @@ This is a full-stack campaign website for Lee Woo-kyu, a candidate for Jinan Cou
 - **State Management**: TanStack Query for server state management
 - **Routing**: Wouter for client-side routing
 - **Forms**: React Hook Form with Zod validation
+- **Analytics**: Google Analytics 4 with custom event tracking
 
 ### Backend Architecture
 - **Framework**: Express.js with TypeScript
@@ -97,6 +98,7 @@ Two main tables:
 
 - June 26, 2025. Initial setup
 - June 26, 2025. Added PostgreSQL database integration with Drizzle ORM, replacing in-memory storage
+- June 26, 2025. Integrated Google Analytics 4 with comprehensive event tracking for user interactions, policy views, AI chat usage, and document downloads
 
 ## User Preferences
 

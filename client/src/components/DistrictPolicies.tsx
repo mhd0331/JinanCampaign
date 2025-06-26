@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { districts } from "@/data/districts";
+import { trackDistrictView } from "@/lib/analytics";
 
 export default function DistrictPolicies() {
   const [activeDistrict, setActiveDistrict] = useState("jinan");
@@ -20,7 +21,10 @@ export default function DistrictPolicies() {
           {districts.map((district) => (
             <Button
               key={district.id}
-              onClick={() => setActiveDistrict(district.id)}
+              onClick={() => {
+                trackDistrictView(district.name);
+                setActiveDistrict(district.id);
+              }}
               variant={activeDistrict === district.id ? "default" : "outline"}
               className={`px-4 py-2 rounded-lg font-semibold transition-all ${
                 activeDistrict === district.id 

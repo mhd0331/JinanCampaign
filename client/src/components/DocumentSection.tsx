@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Download, FileText, BarChart3, Image, Newspaper } from "lucide-react";
 import { useQuery } from "@tanstack/react-query";
+import { trackDocumentDownload } from "@/lib/analytics";
 
 interface Document {
   id: number;
@@ -44,6 +45,7 @@ export default function DocumentSection() {
   const documents = documentsData?.documents || [];
 
   const handleDownload = (documentId: number, title: string) => {
+    trackDocumentDownload(title);
     // In a real implementation, this would trigger an actual file download
     alert(`${title} 다운로드를 시작합니다.`);
   };

@@ -4,6 +4,7 @@ import { Input } from "@/components/ui/input";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { MessageCircle, X, Send, Bot, User, Search, MapPin } from "lucide-react";
 import { apiRequest } from "@/lib/queryClient";
+import { trackAIChat } from "@/lib/analytics";
 
 interface ChatMessage {
   id: string;
@@ -33,6 +34,8 @@ export default function AIChat({ isOpen, onOpenChange }: AIChatProps) {
   const sendMessage = async () => {
     if (!inputMessage.trim() || isLoading) return;
 
+    trackAIChat('message_sent');
+
     const userMessage: ChatMessage = {
       id: Date.now().toString(),
       message: inputMessage,
@@ -52,6 +55,7 @@ export default function AIChat({ isOpen, onOpenChange }: AIChatProps) {
       
       if (response.ok) {
         const data = await response.json();
+        trackAIChat('response_received');
         const aiMessage: ChatMessage = {
           id: (Date.now() + 1).toString(),
           message: data.response,
@@ -122,7 +126,10 @@ export default function AIChat({ isOpen, onOpenChange }: AIChatProps) {
                     onKeyPress={handleKeyPress}
                   />
                   <Button 
-                    onClick={() => onOpenChange(true)}
+                    onClick={() => {
+                      trackAIChat('chat_opened');
+                      onOpenChange(true);
+                    }}
                     className="bg-jinan-green text-white px-6 py-3 rounded-lg hover:bg-green-700 transition-colors"
                   >
                     <Send className="h-4 w-4" />

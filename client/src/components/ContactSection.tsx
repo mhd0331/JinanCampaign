@@ -8,6 +8,7 @@ import { candidateInfo } from "@/data/candidate";
 import { districts } from "@/data/districts";
 import { apiRequest } from "@/lib/queryClient";
 import { useToast } from "@/hooks/use-toast";
+import { trackContactForm } from "@/lib/analytics";
 
 export default function ContactSection() {
   const [formData, setFormData] = useState({
@@ -44,6 +45,7 @@ export default function ContactSection() {
       const response = await apiRequest('POST', '/api/inquiries', formData);
       
       if (response.ok) {
+        trackContactForm('form_submitted');
         toast({
           title: "문의 접수 완료",
           description: "문의가 접수되었습니다. 빠른 시일 내에 연락드리겠습니다.",
@@ -53,6 +55,7 @@ export default function ContactSection() {
         throw new Error('문의 접수 실패');
       }
     } catch (error) {
+      trackContactForm('form_error');
       toast({
         title: "문의 접수 실패",
         description: "문의 접수 중 오류가 발생했습니다. 직접 연락해주세요.",

@@ -2,6 +2,7 @@ import { Button } from "@/components/ui/button";
 import { policies } from "@/data/policies";
 import { Users, Heart, TrendingUp, Settings, Building, Home } from "lucide-react";
 import PolicyMiniCharts from "@/components/PolicyMiniCharts";
+import { trackPolicyView } from "@/lib/analytics";
 
 const iconMap = {
   Users,
@@ -44,6 +45,7 @@ export default function PolicyCards() {
                     ))}
                   </ul>
                   <Button 
+                    onClick={() => trackPolicyView(policy.id)}
                     className={`w-full bg-gradient-to-r ${policy.bgGradient} text-white hover:opacity-90 transition-opacity`}
                   >
                     자세히 보기
