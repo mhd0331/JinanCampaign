@@ -3,6 +3,7 @@ import { policies } from "@/data/policies";
 import { Users, Heart, TrendingUp, Settings, Building, Home } from "lucide-react";
 import PolicyMiniCharts from "@/components/PolicyMiniCharts";
 import { trackPolicyView } from "@/lib/analytics";
+import { Link } from "wouter";
 
 const iconMap = {
   Users,
@@ -44,12 +45,14 @@ export default function PolicyCards() {
                       <li key={index}>• {detail}</li>
                     ))}
                   </ul>
-                  <Button 
-                    onClick={() => trackPolicyView(policy.id)}
-                    className={`w-full bg-gradient-to-r ${policy.bgGradient} text-white hover:opacity-90 transition-opacity`}
-                  >
-                    자세히 보기
-                  </Button>
+                  <Link href={`/policy/${policy.id}`}>
+                    <Button 
+                      onClick={() => trackPolicyView(policy.id)}
+                      className={`w-full bg-gradient-to-r ${policy.bgGradient} text-white hover:opacity-90 transition-opacity`}
+                    >
+                      자세히 보기
+                    </Button>
+                  </Link>
                 </div>
               </div>
             );

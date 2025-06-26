@@ -1,3 +1,6 @@
+import { Link } from "wouter";
+import { policies } from "@/data/policies";
+
 export default function Footer() {
   const scrollToSection = (sectionId: string) => {
     const element = document.getElementById(sectionId);
@@ -9,11 +12,26 @@ export default function Footer() {
   return (
     <footer className="bg-gray-800 text-white py-12">
       <div className="container mx-auto px-4">
-        <div className="grid md:grid-cols-3 gap-8">
+        <div className="grid md:grid-cols-4 gap-8">
           <div>
             <h3 className="text-xl font-bold mb-4">이우규</h3>
             <p className="text-gray-300">진안군수 후보</p>
             <p className="text-gray-300">군민이 주인인 진안을 만들겠습니다</p>
+          </div>
+          
+          <div>
+            <h4 className="text-lg font-semibold mb-4">6대 공약</h4>
+            <ul className="space-y-2 text-gray-300">
+              {policies.map((policy) => (
+                <li key={policy.id}>
+                  <Link href={`/policy/${policy.id}`}>
+                    <button className="hover:text-white transition-colors text-left">
+                      {policy.title}
+                    </button>
+                  </Link>
+                </li>
+              ))}
+            </ul>
           </div>
           
           <div>
@@ -25,14 +43,6 @@ export default function Footer() {
                   className="hover:text-white transition-colors"
                 >
                   후보소개
-                </button>
-              </li>
-              <li>
-                <button 
-                  onClick={() => scrollToSection('policies')}
-                  className="hover:text-white transition-colors"
-                >
-                  6대 공약
                 </button>
               </li>
               <li>
