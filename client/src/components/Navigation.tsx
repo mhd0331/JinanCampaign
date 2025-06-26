@@ -1,6 +1,7 @@
 import { useState } from "react";
-import { Menu, X, Flag } from "lucide-react";
+import { Menu, X, Flag, Settings, MessageSquare } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { Link } from "wouter";
 
 export default function Navigation() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -71,6 +72,18 @@ export default function Navigation() {
             >
               연락처
             </button>
+            <Link href="/suggestions">
+              <Button variant="outline" size="sm" className="ml-4">
+                <MessageSquare className="w-4 h-4 mr-2" />
+                시민 제안
+              </Button>
+            </Link>
+            <Link href="/cms">
+              <Button variant="outline" size="sm" className="ml-2">
+                <Settings className="w-4 h-4 mr-2" />
+                관리자
+              </Button>
+            </Link>
           </div>
           
           {/* Mobile Menu Button */}

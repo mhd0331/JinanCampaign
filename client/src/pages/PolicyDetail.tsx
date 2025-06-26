@@ -8,7 +8,9 @@ import PolicyMiniCharts from "@/components/PolicyMiniCharts";
 import { trackPolicyView } from "@/lib/analytics";
 import Navigation from "@/components/Navigation";
 import FloatingHomeButton from "@/components/FloatingHomeButton";
-import { useEffect } from "react";
+import AIChat from "@/components/AIChat";
+import { useEffect, useState } from "react";
+import { useToast } from "@/hooks/use-toast";
 
 const iconMap = {
   Users,
@@ -22,12 +24,48 @@ const iconMap = {
 export default function PolicyDetail() {
   const { policyId } = useParams();
   const policy = policies.find(p => p.id === policyId);
+  const [isChatOpen, setIsChatOpen] = useState(false);
+  const { toast } = useToast();
 
   useEffect(() => {
     if (policy) {
-      trackPolicyView(policy.id);
+      try {
+        trackPolicyView(policy.id);
+      } catch (error) {
+        console.error('Analytics tracking failed:', error);
+      }
     }
   }, [policy]);
+
+  const handleContactClick = () => {
+    try {
+      const contactElement = document.getElementById('contact');
+      if (contactElement) {
+        contactElement.scrollIntoView({ behavior: 'smooth' });
+        window.location.href = '/#contact';
+      } else {
+        window.location.href = '/#contact';
+      }
+    } catch (error) {
+      toast({
+        title: "오류 발생",
+        description: "문의하기 페이지로 이동하는 중 오류가 발생했습니다. 다시 시도해주세요.",
+        variant: "destructive",
+      });
+    }
+  };
+
+  const handleAIChatClick = () => {
+    try {
+      setIsChatOpen(true);
+    } catch (error) {
+      toast({
+        title: "오류 발생", 
+        description: "AI 상담을 시작하는 중 오류가 발생했습니다. 다시 시도해주세요.",
+        variant: "destructive",
+      });
+    }
+  };
 
   if (!policy) {
     return (
@@ -246,12 +284,17 @@ export default function PolicyDetail() {
                   이 공약에 대해 더 자세히 알고 싶으시거나 의견이 있으시면 언제든 연락해주세요.
                 </p>
                 <div className="space-y-2">
-                  <Link href="/#contact">
-                    <Button className="w-full bg-jinan-green hover:bg-green-700">
-                      문의하기
-                    </Button>
-                  </Link>
-                  <Button variant="outline" className="w-full">
+                  <Button 
+                    onClick={handleContactClick}
+                    className="w-full bg-jinan-green hover:bg-green-700"
+                  >
+                    문의하기
+                  </Button>
+                  <Button 
+                    onClick={handleAIChatClick}
+                    variant="outline" 
+                    className="w-full"
+                  >
                     AI 상담하기
                   </Button>
                 </div>
@@ -261,6 +304,7 @@ export default function PolicyDetail() {
         </div>
       </div>
       <FloatingHomeButton />
+      <AIChat isOpen={isChatOpen} onOpenChange={setIsChatOpen} />
     </div>
   );
 }

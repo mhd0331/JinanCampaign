@@ -24,14 +24,16 @@ export default function Hero({ onPolicyClick, onChatClick }: HeroProps) {
             <div className="flex flex-col sm:flex-row gap-4">
               <Button 
                 onClick={onPolicyClick}
-                className="bg-white text-green-700 px-8 py-3 rounded-lg font-semibold hover:bg-gray-100 transition-colors"
+                size="lg"
+                className="bg-white text-green-700 px-8 py-4 text-lg font-bold hover:bg-gray-100 transition-colors shadow-lg"
               >
                 공약 자세히 보기
               </Button>
               <Button 
                 onClick={onChatClick}
                 variant="outline"
-                className="border-2 border-white text-white px-8 py-3 rounded-lg font-semibold hover:bg-white hover:text-green-700 transition-colors"
+                size="lg"
+                className="border-3 border-white bg-transparent text-white px-8 py-4 text-lg font-bold hover:bg-white hover:text-green-700 transition-colors shadow-lg"
               >
                 AI 공약 상담하기
               </Button>
