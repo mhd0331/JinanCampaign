@@ -54,6 +54,12 @@ export default function Navigation() {
               면별 공약
             </button>
             <button 
+              onClick={() => scrollToSection('data')}
+              className="text-gray-700 hover:text-green-700 transition-colors"
+            >
+              현황 데이터
+            </button>
+            <button 
               onClick={() => scrollToSection('documents')}
               className="text-gray-700 hover:text-green-700 transition-colors"
             >
@@ -104,6 +110,12 @@ export default function Navigation() {
                 className="text-left py-2 text-gray-700 hover:text-green-700 transition-colors"
               >
                 면별 공약
+              </button>
+              <button 
+                onClick={() => scrollToSection('data')}
+                className="text-left py-2 text-gray-700 hover:text-green-700 transition-colors"
+              >
+                현황 데이터
               </button>
               <button 
                 onClick={() => scrollToSection('documents')}

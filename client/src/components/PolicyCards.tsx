@@ -1,6 +1,7 @@
 import { Button } from "@/components/ui/button";
 import { policies } from "@/data/policies";
 import { Users, Heart, TrendingUp, Settings, Building, Home } from "lucide-react";
+import PolicyMiniCharts from "@/components/PolicyMiniCharts";
 
 const iconMap = {
   Users,
@@ -32,6 +33,7 @@ export default function PolicyCards() {
                   </div>
                 </div>
                 <div className="p-6">
+                  <PolicyMiniCharts policyId={policy.id} />
                   <h4 className="text-lg font-semibold mb-3">{policy.subtitle}</h4>
                   <p className="text-gray-600 mb-4">
                     {policy.description}
