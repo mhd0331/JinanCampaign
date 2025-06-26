@@ -8,7 +8,7 @@ const app = express();
 // Security middleware
 app.use(securityHeaders);
 app.use(requestLogger);
-app.use(rateLimit(100, 15 * 60 * 1000)); // 100 requests per 15 minutes
+app.use(rateLimit(1000, 5 * 60 * 1000)); // 1000 requests per 5 minutes
 app.use(sanitizeInput);
 app.use(validateInput);
 
