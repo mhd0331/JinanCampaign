@@ -5,6 +5,7 @@ import { Toaster } from "@/components/ui/toaster";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import Home from "@/pages/Home";
 import PolicyDetail from "@/pages/PolicyDetail";
+import CMSDashboard from "@/pages/CMSDashboard";
 import NotFound from "@/pages/not-found";
 
 function Router() {
@@ -12,6 +13,7 @@ function Router() {
     <Switch>
       <Route path="/" component={Home} />
       <Route path="/policy/:policyId" component={PolicyDetail} />
+      <Route path="/cms" component={CMSDashboard} />
       <Route component={NotFound} />
     </Switch>
   );

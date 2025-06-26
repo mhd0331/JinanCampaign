@@ -1,7 +1,14 @@
 import type { Express } from "express";
 import { createServer, type Server } from "http";
 import { storage } from "./storage";
-import { insertInquirySchema, insertChatMessageSchema } from "@shared/schema";
+import { 
+  insertInquirySchema, 
+  insertChatMessageSchema,
+  insertCmsContentSchema,
+  insertAiTrainingDocSchema,
+  insertSpeechTrainingSchema,
+  insertUserSchema
+} from "@shared/schema";
 import { getChatResponse } from "./services/openai";
 
 export async function registerRoutes(app: Express): Promise<Server> {
@@ -126,6 +133,164 @@ export async function registerRoutes(app: Express): Promise<Server> {
     ];
     
     res.json({ success: true, documents });
+  });
+
+  // CMS Content Routes
+  app.get("/api/cms/content", async (req, res) => {
+    try {
+      const { type, status } = req.query;
+      const content = await storage.getCmsContent(type as string, status as string);
+      res.json({ success: true, content });
+    } catch (error: any) {
+      res.status(500).json({ success: false, error: error.message });
+    }
+  });
+
+  app.post("/api/cms/content", async (req, res) => {
+    try {
+      const validatedData = insertCmsContentSchema.parse(req.body);
+      const content = await storage.createCmsContent(validatedData);
+      res.json({ success: true, content });
+    } catch (error: any) {
+      res.status(400).json({ success: false, error: error.message });
+    }
+  });
+
+  app.get("/api/cms/content/:slug", async (req, res) => {
+    try {
+      const content = await storage.getCmsContentBySlug(req.params.slug);
+      if (!content) {
+        return res.status(404).json({ success: false, error: "Content not found" });
+      }
+      res.json({ success: true, content });
+    } catch (error: any) {
+      res.status(500).json({ success: false, error: error.message });
+    }
+  });
+
+  app.put("/api/cms/content/:id", async (req, res) => {
+    try {
+      const id = parseInt(req.params.id);
+      const content = await storage.updateCmsContent(id, req.body);
+      res.json({ success: true, content });
+    } catch (error: any) {
+      res.status(400).json({ success: false, error: error.message });
+    }
+  });
+
+  app.delete("/api/cms/content/:id", async (req, res) => {
+    try {
+      const id = parseInt(req.params.id);
+      await storage.deleteCmsContent(id);
+      res.json({ success: true });
+    } catch (error: any) {
+      res.status(500).json({ success: false, error: error.message });
+    }
+  });
+
+  // AI Training Document Routes
+  app.get("/api/ai-training/docs", async (req, res) => {
+    try {
+      const { category } = req.query;
+      const docs = await storage.getAiTrainingDocs(category as string);
+      res.json({ success: true, docs });
+    } catch (error: any) {
+      res.status(500).json({ success: false, error: error.message });
+    }
+  });
+
+  app.post("/api/ai-training/docs", async (req, res) => {
+    try {
+      const validatedData = insertAiTrainingDocSchema.parse(req.body);
+      const doc = await storage.createAiTrainingDoc(validatedData);
+      res.json({ success: true, doc });
+    } catch (error: any) {
+      res.status(400).json({ success: false, error: error.message });
+    }
+  });
+
+  app.put("/api/ai-training/docs/:id", async (req, res) => {
+    try {
+      const id = parseInt(req.params.id);
+      const doc = await storage.updateAiTrainingDoc(id, req.body);
+      res.json({ success: true, doc });
+    } catch (error: any) {
+      res.status(400).json({ success: false, error: error.message });
+    }
+  });
+
+  app.delete("/api/ai-training/docs/:id", async (req, res) => {
+    try {
+      const id = parseInt(req.params.id);
+      await storage.deleteAiTrainingDoc(id);
+      res.json({ success: true });
+    } catch (error: any) {
+      res.status(500).json({ success: false, error: error.message });
+    }
+  });
+
+  app.get("/api/ai-training/search", async (req, res) => {
+    try {
+      const { q } = req.query;
+      if (!q) {
+        return res.status(400).json({ success: false, error: "Query parameter required" });
+      }
+      const docs = await storage.searchAiTrainingDocs(q as string);
+      res.json({ success: true, docs });
+    } catch (error: any) {
+      res.status(500).json({ success: false, error: error.message });
+    }
+  });
+
+  // Speech Training Routes
+  app.get("/api/speech-training", async (req, res) => {
+    try {
+      const { speaker } = req.query;
+      const data = await storage.getSpeechTrainingData(speaker as string);
+      res.json({ success: true, data });
+    } catch (error: any) {
+      res.status(500).json({ success: false, error: error.message });
+    }
+  });
+
+  app.post("/api/speech-training", async (req, res) => {
+    try {
+      const validatedData = insertSpeechTrainingSchema.parse(req.body);
+      const speech = await storage.createSpeechTraining(validatedData);
+      res.json({ success: true, speech });
+    } catch (error: any) {
+      res.status(400).json({ success: false, error: error.message });
+    }
+  });
+
+  app.put("/api/speech-training/:id", async (req, res) => {
+    try {
+      const id = parseInt(req.params.id);
+      const speech = await storage.updateSpeechTraining(id, req.body);
+      res.json({ success: true, speech });
+    } catch (error: any) {
+      res.status(400).json({ success: false, error: error.message });
+    }
+  });
+
+  app.delete("/api/speech-training/:id", async (req, res) => {
+    try {
+      const id = parseInt(req.params.id);
+      await storage.deleteSpeechTraining(id);
+      res.json({ success: true });
+    } catch (error: any) {
+      res.status(500).json({ success: false, error: error.message });
+    }
+  });
+
+  app.post("/api/speech-training/:id/validate", async (req, res) => {
+    try {
+      const id = parseInt(req.params.id);
+      await storage.validateSpeechTraining(id);
+      res.json({ success: true });
+    } catch (error: any) {
+      res.status(500).json({ success: false, error: error.message });
+    }
   });
 
   const httpServer = createServer(app);

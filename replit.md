@@ -42,9 +42,13 @@ This is a full-stack campaign website for Lee Woo-kyu, a candidate for Jinan Cou
 - **Monitoring**: Request logging, error handling, performance tracking
 
 ### Database Schema
-Two main tables:
+Extended database with comprehensive content and training management:
 1. **inquiries**: Stores citizen contact forms with name, phone, district, message, and response status
 2. **chat_messages**: Stores AI chat conversations with session management
+3. **cms_content**: Content management system for policies, news, announcements, and documents
+4. **ai_training_docs**: AI training documents with categorization, tags, and embedding support
+5. **speech_training_data**: Speech training data for voice synthesis with phonetic transcription
+6. **users**: User management system for CMS access control with role-based permissions
 
 ## Data Flow
 
@@ -105,6 +109,7 @@ Two main tables:
 - June 26, 2025. Integrated Google Analytics 4 with comprehensive event tracking for user interactions, policy views, AI chat usage, and document downloads
 - June 26, 2025. Created comprehensive policy detail pages with individual routes, budget information, implementation timelines, and related policy suggestions
 - June 26, 2025. Implemented comprehensive security features including input validation, XSS protection, SQL injection prevention, rate limiting, and performance monitoring
+- June 26, 2025. Added comprehensive CMS functionality with content management, AI training document system, and speech training capabilities for enhanced AI responses
 
 ## User Preferences
 
