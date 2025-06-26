@@ -5,6 +5,8 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/u
 import { MessageCircle, X, Send, Bot, User, Search, MapPin } from "lucide-react";
 import { apiRequest } from "@/lib/queryClient";
 import { trackAIChat } from "@/lib/analytics";
+import { validateInput, sanitizeHtml, rateLimiter, generateSessionId } from "@/lib/security";
+import { logger, perfMonitor } from "@/lib/debug";
 
 interface ChatMessage {
   id: string;
@@ -29,12 +31,25 @@ export default function AIChat({ isOpen, onOpenChange }: AIChatProps) {
   ]);
   const [inputMessage, setInputMessage] = useState('');
   const [isLoading, setIsLoading] = useState(false);
-  const [sessionId] = useState(() => `session_${Date.now()}`);
+  const [sessionId] = useState(() => generateSessionId());
 
   const sendMessage = async () => {
     if (!inputMessage.trim() || isLoading) return;
 
+    // Security validation
+    if (!validateInput(inputMessage)) {
+      logger.warn('Invalid input detected in chat message', { message: inputMessage });
+      return;
+    }
+
+    // Rate limiting
+    if (!rateLimiter.isAllowed(sessionId)) {
+      logger.warn('Rate limit exceeded for chat session', { sessionId });
+      return;
+    }
+
     trackAIChat('message_sent');
+    logger.info('Sending chat message', { sessionId, messageLength: inputMessage.length });
 
     const userMessage: ChatMessage = {
       id: Date.now().toString(),
@@ -47,15 +62,20 @@ export default function AIChat({ isOpen, onOpenChange }: AIChatProps) {
     setInputMessage('');
     setIsLoading(true);
 
+    const stopTiming = perfMonitor.startTiming('ai_chat_request');
+    
     try {
       const response = await apiRequest('POST', '/api/chat', {
-        message: inputMessage,
+        message: sanitizeHtml(inputMessage),
         sessionId
       });
       
       if (response.ok) {
         const data = await response.json();
+        stopTiming();
         trackAIChat('response_received');
+        logger.info('Received AI chat response', { sessionId, responseLength: data.response?.length });
+        
         const aiMessage: ChatMessage = {
           id: (Date.now() + 1).toString(),
           message: data.response,
@@ -67,6 +87,8 @@ export default function AIChat({ isOpen, onOpenChange }: AIChatProps) {
         throw new Error('AI 응답 실패');
       }
     } catch (error) {
+      stopTiming();
+      logger.error('AI chat request failed', error);
       const errorMessage: ChatMessage = {
         id: (Date.now() + 1).toString(),
         message: '죄송합니다. 현재 AI 상담 서비스에 문제가 있습니다. 직접 선거사무소(010-7366-8789)로 문의해주세요.',

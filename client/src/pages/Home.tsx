@@ -10,6 +10,7 @@ import AIChat from "@/components/AIChat";
 import DocumentSection from "@/components/DocumentSection";
 import ContactSection from "@/components/ContactSection";
 import Footer from "@/components/Footer";
+import FloatingHomeButton from "@/components/FloatingHomeButton";
 
 export default function Home() {
   const [isChatOpen, setIsChatOpen] = useState(false);
@@ -40,6 +41,7 @@ export default function Home() {
       <DocumentSection />
       <ContactSection />
       <Footer />
+      <FloatingHomeButton />
     </div>
   );
 }

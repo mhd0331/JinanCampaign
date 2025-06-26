@@ -7,6 +7,7 @@ import { policies } from "@/data/policies";
 import PolicyMiniCharts from "@/components/PolicyMiniCharts";
 import { trackPolicyView } from "@/lib/analytics";
 import Navigation from "@/components/Navigation";
+import FloatingHomeButton from "@/components/FloatingHomeButton";
 import { useEffect } from "react";
 
 const iconMap = {
@@ -259,6 +260,7 @@ export default function PolicyDetail() {
           </div>
         </div>
       </div>
+      <FloatingHomeButton />
     </div>
   );
 }

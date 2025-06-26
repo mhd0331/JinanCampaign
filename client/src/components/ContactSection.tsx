@@ -9,6 +9,8 @@ import { districts } from "@/data/districts";
 import { apiRequest } from "@/lib/queryClient";
 import { useToast } from "@/hooks/use-toast";
 import { trackContactForm } from "@/lib/analytics";
+import { validateFormInput, validatePhoneNumber, rateLimiter } from "@/lib/security";
+import { logger, perfMonitor } from "@/lib/debug";
 
 export default function ContactSection() {
   const [formData, setFormData] = useState({
@@ -30,22 +32,51 @@ export default function ContactSection() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     
-    if (!formData.name || !formData.phone || !formData.district || !formData.message) {
+    // Rate limiting check
+    const userIdentifier = formData.phone || 'anonymous';
+    if (!rateLimiter.isAllowed(userIdentifier)) {
+      toast({
+        title: "요청 제한",
+        description: "너무 많은 요청이 발생했습니다. 잠시 후 다시 시도해주세요.",
+        variant: "destructive"
+      });
+      logger.warn('Rate limit exceeded for form submission', { userIdentifier });
+      return;
+    }
+
+    // Input validation
+    const validation = validateFormInput(formData);
+    if (!validation.isValid) {
       toast({
         title: "입력 오류",
-        description: "모든 필드를 입력해주세요.",
+        description: validation.errors[0],
+        variant: "destructive"
+      });
+      logger.warn('Form validation failed', { errors: validation.errors });
+      return;
+    }
+
+    // Phone number validation
+    if (!validatePhoneNumber(formData.phone)) {
+      toast({
+        title: "입력 오류",
+        description: "올바른 휴대폰 번호를 입력해주세요 (예: 010-1234-5678)",
         variant: "destructive"
       });
       return;
     }
 
     setIsSubmitting(true);
+    const stopTiming = perfMonitor.startTiming('contact_form_submission');
     
     try {
+      logger.info('Submitting contact form', { district: formData.district });
       const response = await apiRequest('POST', '/api/inquiries', formData);
       
       if (response.ok) {
+        stopTiming();
         trackContactForm('form_submitted');
+        logger.info('Contact form submitted successfully');
         toast({
           title: "문의 접수 완료",
           description: "문의가 접수되었습니다. 빠른 시일 내에 연락드리겠습니다.",
@@ -55,7 +86,9 @@ export default function ContactSection() {
         throw new Error('문의 접수 실패');
       }
     } catch (error) {
+      stopTiming();
       trackContactForm('form_error');
+      logger.error('Contact form submission failed', error);
       toast({
         title: "문의 접수 실패",
         description: "문의 접수 중 오류가 발생했습니다. 직접 연락해주세요.",

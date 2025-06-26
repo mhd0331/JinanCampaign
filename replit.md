@@ -30,12 +30,16 @@ This is a full-stack campaign website for Lee Woo-kyu, a candidate for Jinan Cou
 - **Routing**: Wouter for client-side routing
 - **Forms**: React Hook Form with Zod validation
 - **Analytics**: Google Analytics 4 with custom event tracking
+- **Security**: Input validation, XSS protection, rate limiting
+- **Debugging**: Performance monitoring, error tracking, network monitoring
 
 ### Backend Architecture
 - **Framework**: Express.js with TypeScript
 - **Database**: PostgreSQL with Drizzle ORM for type-safe database operations
 - **Storage**: PostgreSQL database storage with full CRUD operations
 - **API**: RESTful endpoints for inquiries and chat functionality
+- **Security**: Server-side input validation, SQL injection prevention, rate limiting middleware
+- **Monitoring**: Request logging, error handling, performance tracking
 
 ### Database Schema
 Two main tables:
@@ -100,6 +104,7 @@ Two main tables:
 - June 26, 2025. Added PostgreSQL database integration with Drizzle ORM, replacing in-memory storage
 - June 26, 2025. Integrated Google Analytics 4 with comprehensive event tracking for user interactions, policy views, AI chat usage, and document downloads
 - June 26, 2025. Created comprehensive policy detail pages with individual routes, budget information, implementation timelines, and related policy suggestions
+- June 26, 2025. Implemented comprehensive security features including input validation, XSS protection, SQL injection prevention, rate limiting, and performance monitoring
 
 ## User Preferences
 

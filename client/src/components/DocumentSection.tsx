@@ -42,7 +42,7 @@ export default function DocumentSection() {
     queryKey: ['/api/documents'],
   });
 
-  const documents = documentsData?.documents || [];
+  const documents: Document[] = documentsData?.documents || [];
 
   const handleDownload = (documentId: number, title: string) => {
     trackDocumentDownload(title);
