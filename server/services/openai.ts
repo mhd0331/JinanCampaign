@@ -1,8 +1,16 @@
 import OpenAI from "openai";
 
-const openai = new OpenAI({ 
-  apiKey: process.env.OPENAI_API_KEY || process.env.OPENAI_API_KEY_ENV_VAR || "sk-default-key"
-});
+// Enhanced OpenAI configuration with deployment safety
+const getOpenAIClient = () => {
+  const apiKey = process.env.OPENAI_API_KEY || process.env.OPENAI_API_KEY_ENV_VAR;
+  
+  if (!apiKey || apiKey === "sk-default-key") {
+    console.warn("OpenAI API key not configured - AI chat will return fallback responses");
+    return null;
+  }
+  
+  return new OpenAI({ apiKey });
+};
 
 interface ChatResponse {
   response: string;
@@ -10,6 +18,16 @@ interface ChatResponse {
 }
 
 export async function getChatResponse(userMessage: string): Promise<ChatResponse> {
+  const openai = getOpenAIClient();
+  
+  // Handle missing API key gracefully for deployment
+  if (!openai) {
+    return {
+      response: "AI 상담 서비스가 현재 설정되지 않았습니다. 직접 선거사무소(010-7366-8789)로 문의해주세요.",
+      confidence: 0.1
+    };
+  }
+  
   try {
     const prompt = `
 당신은 진안군수 후보 이우규의 공약과 정책을 안내하는 AI 상담원입니다.

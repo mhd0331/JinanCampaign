@@ -17,23 +17,57 @@ import { getChatResponse } from "./services/openai";
 import { db } from "./db";
 
 export async function registerRoutes(app: Express): Promise<Server> {
-  // Health check endpoint for deployment monitoring
+  // Enhanced health check endpoint for Cloud Run deployment monitoring
   app.get('/health', async (req, res) => {
+    const healthCheck = {
+      status: 'healthy',
+      timestamp: new Date().toISOString(),
+      uptime: process.uptime(),
+      environment: process.env.NODE_ENV || 'unknown',
+      version: process.env.npm_package_version || '1.0.0',
+      database: 'disconnected',
+      memory: process.memoryUsage(),
+      checks: {} as any
+    };
+
     try {
-      await db.execute(`SELECT 1`);
-      res.status(200).json({ 
-        status: 'healthy', 
-        timestamp: new Date().toISOString(),
-        database: 'connected',
-        version: process.env.npm_package_version || '1.0.0'
-      });
+      // Database connectivity check
+      const dbStart = Date.now();
+      await db.execute(`SELECT 1 as health_check`);
+      healthCheck.database = 'connected';
+      healthCheck.checks.database = {
+        status: 'pass',
+        responseTime: Date.now() - dbStart
+      };
+
+      // Environment variables check
+      healthCheck.checks.environment = {
+        status: process.env.DATABASE_URL ? 'pass' : 'fail',
+        hasSessionSecret: !!process.env.SESSION_SECRET,
+        hasOpenAIKey: !!process.env.OPENAI_API_KEY
+      };
+
+      res.status(200).json(healthCheck);
     } catch (error: any) {
-      res.status(503).json({ 
-        status: 'unhealthy', 
-        timestamp: new Date().toISOString(),
-        database: 'disconnected',
-        error: error.message 
-      });
+      healthCheck.status = 'unhealthy';
+      healthCheck.checks.database = {
+        status: 'fail',
+        error: error.message,
+        code: error.code || 'unknown'
+      };
+      
+      res.status(503).json(healthCheck);
+    }
+  });
+
+  // Startup readiness check for Cloud Run
+  app.get('/ready', async (req, res) => {
+    try {
+      // Quick database ping
+      await db.execute(`SELECT 1`);
+      res.status(200).json({ status: 'ready' });
+    } catch (error) {
+      res.status(503).json({ status: 'not ready' });
     }
   });
 
