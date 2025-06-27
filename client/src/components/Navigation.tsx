@@ -1,12 +1,20 @@
 import { useState } from "react";
 import { Menu, X, Flag, Settings, MessageSquare } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { Link } from "wouter";
+import { Link, useLocation } from "wouter";
 
 export default function Navigation() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [location] = useLocation();
 
   const scrollToSection = (sectionId: string) => {
+    // 현재 페이지가 홈페이지가 아니면 홈페이지로 이동 후 스크롤
+    if (location !== '/') {
+      window.location.href = `/#${sectionId}`;
+      setIsMenuOpen(false);
+      return;
+    }
+    
     const element = document.getElementById(sectionId);
     if (element) {
       element.scrollIntoView({ behavior: 'smooth' });
@@ -142,6 +150,20 @@ export default function Navigation() {
               >
                 연락처
               </button>
+              <div className="pt-4 border-t border-gray-200">
+                <Link href="/suggestions">
+                  <Button variant="outline" size="sm" className="w-full mb-2" onClick={() => setIsMenuOpen(false)}>
+                    <MessageSquare className="w-4 h-4 mr-2" />
+                    시민 제안
+                  </Button>
+                </Link>
+                <Link href="/cms">
+                  <Button variant="outline" size="sm" className="w-full" onClick={() => setIsMenuOpen(false)}>
+                    <Settings className="w-4 h-4 mr-2" />
+                    관리자
+                  </Button>
+                </Link>
+              </div>
             </div>
           </div>
         )}

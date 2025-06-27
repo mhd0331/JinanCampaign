@@ -180,17 +180,7 @@ export default function AIChat({ isOpen, onOpenChange }: AIChatProps) {
       <Dialog open={isOpen} onOpenChange={onOpenChange}>
         <DialogContent className="max-w-md">
           <DialogHeader className="bg-jinan-green text-white p-4 rounded-t-lg -m-6 mb-4">
-            <div className="flex justify-between items-center">
-              <DialogTitle className="text-white">AI 공약 상담</DialogTitle>
-              <Button
-                variant="ghost"
-                size="sm"
-                className="text-white hover:text-gray-200"
-                onClick={() => onOpenChange(false)}
-              >
-                <X className="h-4 w-4" />
-              </Button>
-            </div>
+            <DialogTitle className="text-white">AI 공약 상담</DialogTitle>
           </DialogHeader>
           
           <div className="h-96 overflow-y-auto space-y-4 p-2">
