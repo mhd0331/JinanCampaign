@@ -14,8 +14,29 @@ import {
   insertImplementationUpdateSchema
 } from "@shared/schema";
 import { getChatResponse } from "./services/openai";
+import { db } from "./db";
 
 export async function registerRoutes(app: Express): Promise<Server> {
+  // Health check endpoint for deployment monitoring
+  app.get('/health', async (req, res) => {
+    try {
+      await db.execute(`SELECT 1`);
+      res.status(200).json({ 
+        status: 'healthy', 
+        timestamp: new Date().toISOString(),
+        database: 'connected',
+        version: process.env.npm_package_version || '1.0.0'
+      });
+    } catch (error: any) {
+      res.status(503).json({ 
+        status: 'unhealthy', 
+        timestamp: new Date().toISOString(),
+        database: 'disconnected',
+        error: error.message 
+      });
+    }
+  });
+
   // Inquiry routes
   app.post("/api/inquiries", async (req, res) => {
     try {
