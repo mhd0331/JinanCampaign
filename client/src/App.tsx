@@ -8,6 +8,7 @@ import PolicyDetail from "@/pages/PolicyDetail";
 import CMSDashboard from "@/pages/CMSDashboard";
 import CitizenSuggestions from "@/pages/CitizenSuggestions";
 import NotFound from "@/pages/not-found";
+import AccessibilityControls from "@/components/AccessibilityControls";
 
 function Router() {
   return (
@@ -26,7 +27,13 @@ function App() {
     <QueryClientProvider client={queryClient}>
       <TooltipProvider>
         <Toaster />
-        <Router />
+        <a href="#main-content" className="skip-to-content">
+          메인 콘텐츠로 건너뛰기
+        </a>
+        <div id="main-content">
+          <Router />
+        </div>
+        <AccessibilityControls />
       </TooltipProvider>
     </QueryClientProvider>
   );
