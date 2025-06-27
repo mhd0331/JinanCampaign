@@ -56,6 +56,7 @@ const categoryColors = {
   healthcare: "bg-red-100 text-red-800 border-red-200",
   environment: "bg-emerald-100 text-emerald-800 border-emerald-200",
   economy: "bg-purple-100 text-purple-800 border-purple-200",
+  administration: "bg-indigo-100 text-indigo-800 border-indigo-200",
   other: "bg-gray-100 text-gray-800 border-gray-200"
 };
 
@@ -322,6 +323,7 @@ export default function CitizenSuggestions() {
                           <SelectItem value="healthcare">보건의료</SelectItem>
                           <SelectItem value="environment">환경</SelectItem>
                           <SelectItem value="economy">경제</SelectItem>
+                          <SelectItem value="administration">행정</SelectItem>
                           <SelectItem value="other">기타</SelectItem>
                         </SelectContent>
                       </Select>
@@ -456,6 +458,7 @@ export default function CitizenSuggestions() {
                   <SelectItem value="healthcare">보건의료</SelectItem>
                   <SelectItem value="environment">환경</SelectItem>
                   <SelectItem value="economy">경제</SelectItem>
+                  <SelectItem value="administration">행정</SelectItem>
                   <SelectItem value="other">기타</SelectItem>
                 </SelectContent>
               </Select>
@@ -537,7 +540,11 @@ export default function CitizenSuggestions() {
                     )}
 
                     <div className="flex justify-between items-center pt-4 border-t">
-                      <Button variant="outline" size="sm">
+                      <Button 
+                        variant="outline" 
+                        size="sm"
+                        onClick={() => setSelectedSuggestion(suggestion)}
+                      >
                         <MessageSquare className="w-4 h-4 mr-2" />
                         자세히 보기
                       </Button>
@@ -662,6 +669,123 @@ export default function CitizenSuggestions() {
         </Tabs>
 
       </div>
+
+      {/* Suggestion Detail Modal */}
+      <Dialog open={!!selectedSuggestion} onOpenChange={() => setSelectedSuggestion(null)}>
+        <DialogContent className="max-w-4xl max-h-[80vh] overflow-y-auto">
+          {selectedSuggestion && (
+            <>
+              <DialogHeader>
+                <DialogTitle className="text-2xl">{selectedSuggestion.title}</DialogTitle>
+              </DialogHeader>
+              
+              <div className="space-y-6">
+                {/* Badges */}
+                <div className="flex gap-2 flex-wrap">
+                  <Badge className={categoryColors[selectedSuggestion.category as keyof typeof categoryColors]}>
+                    {selectedSuggestion.category === 'infrastructure' ? '인프라' :
+                     selectedSuggestion.category === 'education' ? '교육' :
+                     selectedSuggestion.category === 'healthcare' ? '보건의료' :
+                     selectedSuggestion.category === 'environment' ? '환경' :
+                     selectedSuggestion.category === 'economy' ? '경제' :
+                     selectedSuggestion.category === 'administration' ? '행정' : '기타'}
+                  </Badge>
+                  <Badge className={statusColors[selectedSuggestion.status as keyof typeof statusColors]}>
+                    {selectedSuggestion.status === 'submitted' ? '제출됨' :
+                     selectedSuggestion.status === 'under_review' ? '검토중' :
+                     selectedSuggestion.status === 'approved' ? '승인됨' :
+                     selectedSuggestion.status === 'implemented' ? '시행됨' : '반려됨'}
+                  </Badge>
+                  <Badge className={priorityColors[selectedSuggestion.priority as keyof typeof priorityColors]}>
+                    {selectedSuggestion.priority === 'low' ? '낮음' :
+                     selectedSuggestion.priority === 'medium' ? '보통' :
+                     selectedSuggestion.priority === 'high' ? '높음' : '긴급'}
+                  </Badge>
+                </div>
+
+                {/* Meta Info */}
+                <div className="bg-gray-50 p-4 rounded-lg">
+                  <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-sm">
+                    <div>
+                      <span className="font-medium">제안자:</span> {selectedSuggestion.isAnonymous ? "익명" : selectedSuggestion.submitterName}
+                    </div>
+                    <div>
+                      <span className="font-medium">지역:</span> {selectedSuggestion.submitterDistrict}
+                    </div>
+                    <div className="flex items-center gap-1">
+                      <Eye className="w-4 h-4" />
+                      <span>{selectedSuggestion.viewCount} 조회</span>
+                    </div>
+                    <div className="flex items-center gap-1">
+                      <ThumbsUp className="w-4 h-4" />
+                      <span>{selectedSuggestion.supportCount} 지지</span>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Description */}
+                <div>
+                  <h3 className="text-lg font-semibold mb-3">제안 내용</h3>
+                  <div className="prose max-w-none">
+                    <p className="text-gray-700 leading-relaxed whitespace-pre-line">{selectedSuggestion.description}</p>
+                  </div>
+                </div>
+
+                {/* Budget and Timeline */}
+                {(selectedSuggestion.expectedBudget || selectedSuggestion.expectedTimeline) && (
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    {selectedSuggestion.expectedBudget && (
+                      <div className="bg-blue-50 p-4 rounded-lg">
+                        <h4 className="font-semibold text-blue-800 mb-2">예상 예산</h4>
+                        <p className="text-blue-700">{selectedSuggestion.expectedBudget}</p>
+                      </div>
+                    )}
+                    {selectedSuggestion.expectedTimeline && (
+                      <div className="bg-green-50 p-4 rounded-lg">
+                        <h4 className="font-semibold text-green-800 mb-2">예상 기간</h4>
+                        <p className="text-green-700">{selectedSuggestion.expectedTimeline}</p>
+                      </div>
+                    )}
+                  </div>
+                )}
+
+                {/* Tags */}
+                {selectedSuggestion.tags && selectedSuggestion.tags.length > 0 && (
+                  <div>
+                    <h4 className="font-semibold mb-2">관련 태그</h4>
+                    <div className="flex gap-2 flex-wrap">
+                      {selectedSuggestion.tags.map((tag, index) => (
+                        <Badge key={index} variant="outline" className="text-xs">
+                          #{tag}
+                        </Badge>
+                      ))}
+                    </div>
+                  </div>
+                )}
+
+                {/* Actions */}
+                <div className="flex justify-between items-center pt-4 border-t">
+                  <div className="text-sm text-gray-500">
+                    제출일: {new Date(selectedSuggestion.createdAt).toLocaleDateString('ko-KR', {
+                      year: 'numeric',
+                      month: 'long',
+                      day: 'numeric'
+                    })}
+                  </div>
+                  <Button 
+                    onClick={() => handleSupportSuggestion(selectedSuggestion.id)}
+                    disabled={supportSuggestionMutation.isPending}
+                  >
+                    <Heart className="w-4 h-4 mr-2" />
+                    이 제안 지지하기
+                  </Button>
+                </div>
+              </div>
+            </>
+          )}
+        </DialogContent>
+      </Dialog>
+
       <FloatingHomeButton />
     </div>
   );
