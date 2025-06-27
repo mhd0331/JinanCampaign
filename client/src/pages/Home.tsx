@@ -4,7 +4,6 @@ import Hero from "@/components/Hero";
 import CandidateProfile from "@/components/CandidateProfile";
 import PolicyCards from "@/components/PolicyCards";
 import DistrictPolicies from "@/components/DistrictPolicies";
-import Infographics from "@/components/Infographics";
 import EconomicImpactChart from "@/components/EconomicImpactChart";
 import AIChat from "@/components/AIChat";
 import DocumentSection from "@/components/DocumentSection";
@@ -32,7 +31,6 @@ export default function Home() {
       <CandidateProfile />
       <PolicyCards />
       <DistrictPolicies />
-      <Infographics />
       <EconomicImpactChart />
       <AIChat 
         isOpen={isChatOpen}
