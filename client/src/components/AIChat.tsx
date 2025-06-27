@@ -172,7 +172,7 @@ export default function AIChat({ isOpen, onOpenChange }: AIChatProps) {
           onClick={() => onOpenChange(true)}
           className="w-16 h-16 bg-jinan-green rounded-full shadow-lg flex items-center justify-center text-white hover:bg-green-700 transition-colors duration-300 hover:brightness-110"
         >
-          <MessageCircle className="h-6 w-6" />
+          <span className="text-lg font-bold">AI</span>
         </Button>
       </div>
 
