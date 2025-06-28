@@ -26,9 +26,7 @@ export default function CandidateProfile() {
               <h3 className="text-3xl font-bold jinan-green mb-2">
                 {candidateInfo.name}
               </h3>
-              <p className="text-xl text-gray-600 mb-4 font-medium">
-                漢字: {candidateInfo.nameEng}
-              </p>
+
               <p className="text-lg text-gray-700 leading-relaxed">
                 {candidateInfo.description}
               </p>
