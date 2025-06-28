@@ -14,7 +14,7 @@ export default function CandidateProfile() {
           <div>
             <div className="w-full max-w-md mx-auto">
               <img 
-                src="/attached_assets/이우규-원형.JPG_1750907328485.png" 
+                src="/attached_assets/이우규-원본_1751090980969.JPG" 
                 alt="이우규 후보자 프로필" 
                 className="w-full rounded-xl shadow-lg"
               />
