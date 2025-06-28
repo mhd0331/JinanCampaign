@@ -72,8 +72,15 @@ export default function DistrictPolicies() {
             <div>
               <img 
                 src={currentDistrict.image}
-                alt={`${currentDistrict.name} 모습`}
+                alt={`${currentDistrict.name} 정책 인포그래픽`}
                 className="w-full rounded-xl shadow-lg"
+                style={{
+                  maxWidth: '100%',
+                  height: 'auto',
+                  objectFit: 'contain',
+                  backgroundColor: '#f8f9fa'
+                }}
+                loading="lazy"
               />
             </div>
             <div>
@@ -103,6 +110,13 @@ export default function DistrictPolicies() {
                     src={infographic}
                     alt={`${currentDistrict.name} 정책 인포그래픽 ${index + 1}`}
                     className="w-full h-auto"
+                    style={{
+                      maxWidth: '100%',
+                      height: 'auto',
+                      objectFit: 'contain',
+                      backgroundColor: '#ffffff'
+                    }}
+                    loading="lazy"
                   />
                 </div>
               ))}

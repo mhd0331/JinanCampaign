@@ -17,7 +17,12 @@ export default function CandidateProfile() {
                 src="/attached_assets/이우규-원본_1751090980969.JPG" 
                 alt="이우규 후보자 프로필" 
                 className="w-full rounded-xl shadow-lg object-cover"
-                style={{ maxWidth: '400px', height: 'auto' }}
+                style={{ 
+                  maxWidth: '400px', 
+                  height: 'auto',
+                  maxHeight: '500px',
+                  objectFit: 'cover'
+                }}
               />
             </div>
           </div>
