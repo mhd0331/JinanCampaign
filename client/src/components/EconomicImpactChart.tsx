@@ -1,5 +1,5 @@
-import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, BarChart, Bar, Cell } from 'recharts';
-import { DollarSign, TrendingUp, Users, Zap } from 'lucide-react';
+import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, BarChart, Bar, Cell, LineChart, Line } from 'recharts';
+import { DollarSign, TrendingUp, Users, Zap, AlertTriangle } from 'lucide-react';
 
 // 지역화폐 경제효과 시뮬레이션 데이터
 const localCurrencyImpact = [
@@ -24,6 +24,20 @@ const renewableEnergyData = [
   { type: '소수력발전', capacity: '10MW', revenue: 45, households: 80 },
   { type: '영농형태양광', capacity: '30MW', revenue: 85, households: 150 },
   { type: '바이오가스', capacity: '5MW', revenue: 35, households: 60 }
+];
+
+// 진안군 인구 변화 데이터 (실제 데이터 기반)
+const populationData = [
+  { year: '2015', population: 26854 },
+  { year: '2016', population: 26234 },
+  { year: '2017', population: 25687 },
+  { year: '2018', population: 25198 },
+  { year: '2019', population: 24756 },
+  { year: '2020', population: 24496 },
+  { year: '2021', population: 24187 },
+  { year: '2022', population: 23912 },
+  { year: '2023', population: 23665 },
+  { year: '2024', population: 23421 }
 ];
 
 const COLORS = ['#059669', '#3B82F6', '#F59E0B', '#8B5CF6'];
@@ -150,6 +164,75 @@ export default function EconomicImpactChart() {
                 <div className="text-2xl font-bold text-green-700 mb-1">285억원</div>
                 <div className="text-sm text-green-600">연간 총 주민수익</div>
                 <div className="text-xs text-gray-600 mt-1">490가구 직접 수혜</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* 진안군 인구 변화 현황 */}
+        <div className="bg-gradient-to-br from-red-50 to-orange-50 rounded-xl p-8 mb-12">
+          <h3 className="text-2xl font-bold text-gray-800 mb-6 flex items-center">
+            <AlertTriangle className="mr-3 text-red-600" />
+            진안군 인구 변화 현황
+          </h3>
+          <div className="grid lg:grid-cols-2 gap-8">
+            <div>
+              <ResponsiveContainer width="100%" height={350}>
+                <LineChart data={populationData}>
+                  <CartesianGrid strokeDasharray="3 3" />
+                  <XAxis dataKey="year" />
+                  <YAxis 
+                    domain={[23000, 27000]}
+                    tickFormatter={(value) => `${(value/1000).toFixed(0)}천명`}
+                  />
+                  <Tooltip 
+                    formatter={(value) => [`${value.toLocaleString()}명`, '인구수']}
+                    labelFormatter={(label) => `${label}년`}
+                  />
+                  <Line 
+                    type="monotone" 
+                    dataKey="population" 
+                    stroke="#DC2626" 
+                    strokeWidth={3}
+                    dot={{ fill: '#DC2626', strokeWidth: 2, r: 5 }}
+                    activeDot={{ r: 8, stroke: '#DC2626', strokeWidth: 2 }}
+                  />
+                </LineChart>
+              </ResponsiveContainer>
+            </div>
+            <div className="space-y-6">
+              <div className="bg-white rounded-lg p-6 shadow-md border-l-4 border-red-500">
+                <h4 className="text-lg font-bold text-red-700 mb-3">인구감소 위기</h4>
+                <div className="space-y-3">
+                  <div className="flex justify-between items-center">
+                    <span className="text-gray-600">2015년 인구</span>
+                    <span className="font-bold text-gray-800">26,854명</span>
+                  </div>
+                  <div className="flex justify-between items-center">
+                    <span className="text-gray-600">2024년 인구</span>
+                    <span className="font-bold text-red-600">23,421명</span>
+                  </div>
+                  <div className="border-t pt-3">
+                    <div className="flex justify-between items-center">
+                      <span className="text-gray-700 font-medium">9년간 감소</span>
+                      <span className="font-bold text-red-700 text-lg">-3,433명</span>
+                    </div>
+                    <div className="flex justify-between items-center mt-1">
+                      <span className="text-gray-600 text-sm">감소율</span>
+                      <span className="font-bold text-red-600">-12.8%</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              
+              <div className="bg-blue-50 rounded-lg p-6 border-l-4 border-blue-500">
+                <h4 className="text-lg font-bold text-blue-700 mb-3">정책 목표</h4>
+                <div className="space-y-2 text-sm">
+                  <p className="text-gray-700">• 2028년까지 인구 25,000명 회복</p>
+                  <p className="text-gray-700">• 청년층 유입을 통한 인구구조 개선</p>
+                  <p className="text-gray-700">• 지역경제 활성화로 일자리 창출</p>
+                  <p className="text-gray-700">• 정주여건 개선으로 인구유출 방지</p>
+                </div>
               </div>
             </div>
           </div>
