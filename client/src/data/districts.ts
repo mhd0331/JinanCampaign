@@ -41,7 +41,7 @@ export const districts: District[] = [
     name: "동향면",
     title: "동향면 생태관광 활성화",
     description: "수변생태공원과 디지털 인프라 구축",
-    image: "/attached_assets/교통과주차-인포_1751090757029.png",
+    image: "/attached_assets/river-fish_1751090513751.png",
     projects: [
       {
         title: "수변생태공원 조성",
@@ -60,7 +60,7 @@ export const districts: District[] = [
     name: "마령면",
     title: "마령면 관광산업 육성",
     description: "마이산 연계 관광자원 개발",
-    image: "/attached_assets/마령-에너지자립_1751090757030.png",
+    image: "/attached_assets/공공형발전사업_1751090757028.png",
     projects: [
       {
         title: "마령장터 365 프로젝트",
@@ -84,7 +84,7 @@ export const districts: District[] = [
     name: "백운면",
     title: "백운면 농업혁신 클러스터",
     description: "농기계 임대사업 혁신과 관광상품 개발",
-    image: "/attached_assets/스마트팜1_1751090757032.png",
+    image: "/attached_assets/sheep-goat_1751090513752.png",
     projects: [
       {
         title: "농기계 임대사업 혁신",
@@ -103,7 +103,7 @@ export const districts: District[] = [
     name: "부귀면",
     title: "부귀면 축산업 특화",
     description: "산양유 특화단지와 6차 산업 육성",
-    image: "/attached_assets/청년정착지원_1751090757035.png",
+    image: "/attached_assets/medical welfare-1_1751090513749.png",
     projects: [
       {
         title: "산양유 특화단지 조성",
@@ -122,7 +122,7 @@ export const districts: District[] = [
     name: "상전면",
     title: "상전면 교육환경 개선",
     description: "평생학습 지원과 농업소득 증대",
-    image: "/attached_assets/청년지원_1751090757036.png",
+    image: "/attached_assets/medical welfare-2_1751090513751.png",
     projects: [
       {
         title: "교육환경 개선",
@@ -141,7 +141,7 @@ export const districts: District[] = [
     name: "성수면",
     title: "성수면 의료접근성 개선",
     description: "의료서비스 확충과 교육환경 개선",
-    image: "/attached_assets/수처리-1_1751090757031.png",
+    image: "/attached_assets/lakeside-tuor_1751090497063.png",
     projects: [
       {
         title: "의료접근성 혁신 프로젝트",
@@ -160,7 +160,7 @@ export const districts: District[] = [
     name: "안천면",
     title: "안천면 교통인프라 개선",
     description: "접근성 향상과 문화관광 자원 개발",
-    image: "/attached_assets/진안교통주차_1751090757033.png",
+    image: "/attached_assets/tracking_1751090513753.png",
     projects: [
       {
         title: "교통인프라 개선",
@@ -179,7 +179,7 @@ export const districts: District[] = [
     name: "용담면",
     title: "용담면 수변관광 특화",
     description: "용담호 수변 레저복합단지 조성",
-    image: "/attached_assets/운장산-1_1751090757033.png",
+    image: "/attached_assets/DRT_1751090487916.png",
     projects: [
       {
         title: "수변 레저복합단지 조성",
@@ -203,7 +203,7 @@ export const districts: District[] = [
     name: "정천면",
     title: "정천면 교육관광 허브",
     description: "글로벌 농촌유학과 에코힐링 관광",
-    image: "/attached_assets/기본사회위원회1_1751090757029.png",
+    image: "/attached_assets/DRT공공버스_1751090497062.png",
     projects: [
       {
         title: "글로벌 농촌유학 허브 조성",
@@ -222,7 +222,7 @@ export const districts: District[] = [
     name: "주천면",
     title: "주천면 종합개발",
     description: "청년 정착과 혁신농업 클러스터",
-    image: "/attached_assets/공공형발전사업_1751090757028.png",
+    image: "/attached_assets/스마트팜1_1751090757032.png",
     projects: [
       {
         title: "주천 청년 드림 빌리지",
