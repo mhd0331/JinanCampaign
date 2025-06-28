@@ -8,6 +8,13 @@ export interface Policy {
   bgGradient: string;
   details: string[];
   budget?: string;
+  timeline?: string[];
+  implementation?: {
+    phase1: string[];
+    phase2: string[];
+    phase3?: string[];
+  };
+  expectedOutcome?: string[];
 }
 
 export const policies: Policy[] = [
@@ -27,7 +34,14 @@ export const policies: Policy[] = [
       "기본사회위원회 운영 예산",
       "주민참여 교육 프로그램 시행",
       "마을 단위 자치활동 지원금"
-    ]
+    ],
+    timeline: ["2026년 기본사회위원회 구성", "2027년 찐반장·찐여사 프로그램 시행", "2028년 협동조합 설립 완료"],
+    implementation: {
+      phase1: ["주민, 기업, 시민사회조직 등 참여 기본사회위원회 구성", "주거, 의료, 돌봄, 교육, 교통, 공공서비스 분야 정책 총괄 조정"],
+      phase2: ["행복콜과 미니버스 활용한 찾아가는 서비스 제공", "50~60대 대상 찐반장 일자리 창출 및 전문 교육 시행"],
+      phase3: ["그린에너지 협동조합 설립 지원", "공공사업 진안 주거자 가산점 제도 도입"]
+    },
+    expectedOutcome: ["주민 정책 참여율 30% 향상", "맞춤형 돌봄 서비스 만족도 90% 달성", "지역 협동조합 5개소 설립"]
   },
   {
     id: "welfare",
