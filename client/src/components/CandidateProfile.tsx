@@ -14,7 +14,7 @@ export default function CandidateProfile() {
           <div>
             <div className="w-full max-w-md mx-auto">
               <img 
-                src="https://images.unsplash.com/photo-1560472354-b33ff0c44a43?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&h=600" 
+                src="/attached_assets/이우규-원형.JPG_1750907328485.png" 
                 alt="이우규 후보자 프로필" 
                 className="w-full rounded-xl shadow-lg"
               />
@@ -22,9 +22,12 @@ export default function CandidateProfile() {
           </div>
           <div className="space-y-6">
             <div>
-              <h3 className="text-2xl font-bold jinan-green mb-4">
-                {candidateInfo.name} ({candidateInfo.nameEng})
+              <h3 className="text-3xl font-bold jinan-green mb-2">
+                {candidateInfo.name}
               </h3>
+              <p className="text-xl text-gray-600 mb-4 font-medium">
+                漢字: {candidateInfo.nameEng}
+              </p>
               <p className="text-lg text-gray-700 leading-relaxed">
                 {candidateInfo.description}
               </p>

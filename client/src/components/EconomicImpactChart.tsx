@@ -30,7 +30,7 @@ const COLORS = ['#059669', '#3B82F6', '#F59E0B', '#8B5CF6'];
 
 export default function EconomicImpactChart() {
   return (
-    <section className="py-20 bg-white">
+    <section id="data" className="py-20 bg-white">
       <div className="container mx-auto px-4">
         <div className="text-center mb-16">
           <h2 className="text-4xl font-bold text-gray-800 mb-4">경제정책 기대효과</h2>
